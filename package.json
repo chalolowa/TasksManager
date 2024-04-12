@@ -14,5 +14,14 @@
   "type": "module",
   "workspaces": [
     "src/TasksManager_backend"
-  ]
+  ],
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "uuidv4": "^6.2.13"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.21"
+  }
 }
