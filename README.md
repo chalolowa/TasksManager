@@ -34,7 +34,7 @@ Contributions are welcome! If you find any issues or have suggestions for improv
 This project is licensed under the [MIT License](LICENSE).
 
 ### Contact
-For any inquiries or feedback, you can reach out to [Your Name] at [your_email@example.com].
+For any inquiries or feedback, you can reach out to [Your Name] at locha.softwaredev@gmail.com.
 
 ---
 
