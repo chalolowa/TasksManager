@@ -1,4 +1,4 @@
-import { Canister, ic, query, StableBTreeMap, text } from 'azle';
+import { ic, StableBTreeMap } from 'azle';
 import express from 'express';
 import http from 'http';
 import { uuid } from 'uuidv4';
