@@ -34,8 +34,5 @@ Contributions are welcome! If you find any issues or have suggestions for improv
 This project is licensed under the [MIT License](LICENSE).
 
 ### Contact
-For any inquiries or feedback, you can reach out to [Your Name] at locha.softwaredev@gmail.com.
+For any inquiries or feedback, you can reach out to Chalolowa at locha.softwaredev@gmail.com.
 
----
-
-Feel free to customize the README according to your preferences and project details. Let me know if you need further assistance!
