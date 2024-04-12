@@ -1,0 +1,20 @@
+{
+  "canisters": {
+    "TasksManager_backend": {
+      "build": "npx azle TasksManager_backend",
+      "candid": "src/TasksManager_backend/TasksManager_backend.did",
+      "gzip": true,
+      "main": "src/TasksManager_backend/src/index.ts",
+      "type": "custom",
+      "wasm": ".azle/TasksManager_backend/TasksManager_backend.wasm"
+    }
+  },
+  "defaults": {
+    "build": {
+      "args": "",
+      "packtool": ""
+    }
+  },
+  "output_env_file": ".env",
+  "version": 1
+}
