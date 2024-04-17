@@ -1,73 +1,82 @@
 import express from 'express';
 import { ic } from 'azle';
-import { uuid } from 'uuidv4';
+import { v4 as uuid } from 'uuid';
 import { Task, TasksStorage } from './model';
 
 const route = express.Router();
 
-route.get('/', (req, res) => {
+route.get('/', async (req, res, next) => {
     try {
-        res.json(TasksStorage.values());
+        const tasks = await TasksStorage.values();
+        res.json(tasks);
     } catch (error) {
-        console.log('Failed to get all tasks. See error: ${error}');
+        next(error);
     }
 });
 
-route.get('/tasks/:id', (req, res) => {
+route.get('/tasks/:id', async (req, res, next) => {
     try {
-        const TaskId = req.params.id;
-        const retrieved = TasksStorage.get(TaskId);
-        res.json(retrieved).status(200);
-    } catch (error) {
-        console.log('Failed to get task!! See error:' + error);
-    }
-});
-
-route.post('/tasks/new', (req, res) => {
-    try {
-        const newTask: Task = {id: uuid(), createdAt: getCurrentDate(), ...req.body};
-        TasksStorage.insert(newTask.id, newTask);
-        res.json(newTask).status(201);
-    } catch (error) {
-        console.log('Failed to create new task! See error: ' + error);
-    }
-});
-
-route.put('/tasks/:id', (req, res) => {
-    try {
-        const TaskId = req.params.id;
-        const RetrievedTaskId = TasksStorage.get(TaskId);
-        if ("None" in RetrievedTaskId) {
-            res.status(400).send('There is no task with the provided id ${TaskId}!!! The task does not exist')
-        } else {
-            const task = RetrievedTaskId.Some;
-            const updatedTask = {...task, ...req.body, updatedAt: getCurrentDate()};
-            TasksStorage.insert(task?.id, updatedTask);
-            res.json(updatedTask);
+        const taskId = req.params.id;
+        const task = await TasksStorage.get(taskId);
+        if (!task) {
+            res.status(404).send(`Task with id ${taskId} not found`);
+            return;
         }
+        res.json(task).status(200);
     } catch (error) {
-        console.log('Failed to update task! See error: ' + error);
+        next(error);
     }
 });
 
-route.delete('/tasks/:id', (req, res) => {
+route.post('/tasks/new', async (req, res, next) => {
     try {
-        const TaskId = req.params.id;
-        const RetrievedTaskId = TasksStorage.get(TaskId);
-        if ("None" in RetrievedTaskId) {
-            res.status(400).send('There is no task with the provided id ${TaskId}!!! The task does not exist')
-        } else {
-            TasksStorage.remove(TaskId);
-        }
+        const newTask: Task = { id: uuid(), createdAt: getCurrentDate(), ...req.body };
+        await TasksStorage.insert(newTask.id, newTask);
+        res.status(201).json(newTask);
     } catch (error) {
-        console.log('Failed to delete task! Please try again!!');
-        console.log(error);
+        next(error);
     }
+});
+
+route.put('/tasks/:id', async (req, res, next) => {
+    try {
+        const taskId = req.params.id;
+        const task = await TasksStorage.get(taskId);
+        if (!task) {
+            res.status(404).send(`Task with id ${taskId} not found`);
+            return;
+        }
+        const updatedTask = { ...task, ...req.body, updatedAt: getCurrentDate() };
+        await TasksStorage.insert(taskId, updatedTask);
+        res.json(updatedTask);
+    } catch (error) {
+        next(error);
+    }
+});
+
+route.delete('/tasks/:id', async (req, res, next) => {
+    try {
+        const taskId = req.params.id;
+        const deleted = await TasksStorage.remove(taskId);
+        if (!deleted) {
+            res.status(404).send(`Task with id ${taskId} not found`);
+            return;
+        }
+        res.sendStatus(204);
+    } catch (error) {
+        next(error);
+    }
+});
+
+// Error handling middleware
+route.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).send('Something went wrong!');
 });
 
 export default route;
 
 function getCurrentDate() {
-    const timestamp = new Number(ic.time());
-    return new Date(timestamp.valueOf() / 1000_000);
+    const timestamp = ic.time();
+    return new Date(timestamp / 1000000);
 }
